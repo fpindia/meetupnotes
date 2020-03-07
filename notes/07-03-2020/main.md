@@ -46,7 +46,7 @@ basic primitive to manage thread scheduling in the compiler. In this
 tutorial, KC Sivaramakrishnan (and others) provide step by step
 explanation of using Alg. Effects as resumable exceptions that reduce
 monad poisoning in concurrent OCaml code and also how popular language
-constructs are async/await, generators/iterators, message passing,
+constructs like async/await, generators/iterators, message passing,
 exception handling etc can all be expressed with Algebraic Effects and
 handlers.
 
@@ -68,7 +68,7 @@ involved in understanding them. Explaining the basics of Universal
 Algebra (signatures, equations, models, co-models etc), it explains
 what makes Alg. Effects algebraic in nature.
 
-### An Introduction to Algebraic Effects and Handlers by Martija Pretnar
+### An Introduction to Algebraic Effects and Handlers by Matija Pretnar
 
 [Tutorial Link](https://www.eff-lang.org/handlers-tutorial.pdf)
 
@@ -79,3 +79,6 @@ model it's effectful operations as effectful computations and
 handlers. This tutorial is aim more at those who dont shy away from
 operational/denotational semantics of a hypothetical programming languages.
 
+### A collaborative bibliography of work related to the theory and practice of computational effects
+
+[Github Link](https://github.com/yallop/effects-bibliography)
