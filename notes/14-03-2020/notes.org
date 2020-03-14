@@ -81,3 +81,7 @@
    4. Tracing garbage not necessary, ergo garbage format is irrelevant
    5. Lower Latency (real time Scheme) with Lazy alloc (discussed in
       Part 1)
+
+** Further Reading
+
+   1. https://www.more-magic.net/posts/internals-gc.html#a-short-introduction-to-continuation-passing-style
