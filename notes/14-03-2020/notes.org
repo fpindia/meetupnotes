@@ -1,0 +1,83 @@
+* Cheney on the MTA - Henry Baker
+
+** Introduction
+
+   [[http://home.pipeline.com/~hbaker1/CheneyMTA.pdf][CONS Should Not CONS it's Arguments, Part II: Cheney on the MTA]] is
+   an influential paper that
+   [[https://www.more-magic.net/posts/internals-gc.html#a-short-introduction-to-continuation-passing-style][guided the design and implementation of Chicken Scheme]]. Chicken
+   Scheme attains it's portability goals /(A practical and portable
+   Scheme system)/ by compiling to C. This paper discusses about tail
+   recursion a Scheme implementation can achieve recursion via
+   Continuation Passing Style and utilising the C Call Stack for
+   dyanmic/heap requirements too!
+
+   It is important at a given Scheme implementation is able to run
+   recursive call in a finite amount of memory. If a Scheme
+   implementation was to compile to C (for portability), then the
+   generated C must be must run out of stack during recursion. A
+   popular approach to this is trampolining. The paper however
+   introduces the idea of using continuations (or callbacks) to
+   achieve this instead.
+
+** Proposal
+
+   Converty Scheme to continuation passig style (nested function calls that never
+   return) and convert each callback into C functions. Arguments are
+   passed as usual. Closure (free variables) are passed as additional
+   arguments.
+
+   In this fashion, the stack keeps growning until it runs out of
+   memory. And when it does, the stack is reset - live objects and
+   live closures are copied. They act as a starting point for the next
+   continuation that begins once the stack is reset.
+
+
+** Cons should not Cons it's arguments
+
+   The paper describes how allocations that otherwise need heap can be
+   done on the stack by "not cons'ing", but simple utilising a local
+   variable in the stack frame.
+
+   #+BEGIN_SRC c
+     object revappend (object cont, object old, object, object new) {
+       if (old == NIL) {
+	 (cont->fn)(cont->env, new); // Callback with new list
+       } else {
+	 cons_type newer; // allocation
+	 newer.tag = cons_tag;
+	 newer.car = old->car;
+	 newer.cdr = new;
+	 return revappend(cont, old->cdr, &newer);
+       }
+     }
+   #+END_SRC
+
+** State of art
+
+   Paper proceeds to discusses the impact of this approach on certain
+   implementation aspects
+
+   1. Varargs
+   2. Iteration - how with this approach, TCO of turning a recursive
+      call tree to iterative steps can safely occcur only if no major
+      allocation is seen in the body
+   3. Scheme optimisation - particularly how lambda lifting and
+      closure conversion
+   4. malloc's objects
+   5. Separate compilation - how each of continuations are C functions
+      that can reside in separate files, making it easier for the C
+      compiler to optimise (unlike existing Scheme implementations)
+   6. Calling normal C functions - ensuring enough stack space is
+      ensured in advance
+   7. Sparc issues when it comes to hardware
+      implementations. (Remember: portability was a main reason Scheme
+      is being compiled to C)
+   
+** Conclusion
+
+   1. Lack of tail recursion is not necessaryily a hinderance
+   2. CPS can address dynamic memory needs in the stack itself
+   3. More portable than SML/NJ
+   4. Tracing garbage not necessary, ergo garbage format is irrelevant
+   5. Lower Latency (real time Scheme) with Lazy alloc (discussed in
+      Part 1)
