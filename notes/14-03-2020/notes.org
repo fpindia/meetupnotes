@@ -6,27 +6,27 @@
    an influential paper that
    [[https://www.more-magic.net/posts/internals-gc.html#a-short-introduction-to-continuation-passing-style][guided the design and implementation of Chicken Scheme]]. Chicken
    Scheme attains it's portability goals /(A practical and portable
-   Scheme system)/ by compiling to C. This paper discusses about tail
-   recursion a Scheme implementation can achieve recursion via
+   Scheme system)/ by compiling to C. This paper discusses how a
+   Scheme implementation can achieve recursion via 
    Continuation Passing Style and utilising the C Call Stack for
    dyanmic/heap requirements too!
 
    It is important at a given Scheme implementation is able to run
    recursive call in a finite amount of memory. If a Scheme
    implementation was to compile to C (for portability), then the
-   generated C must be must run out of stack during recursion. A
+   generated C must be must not run out of stack during recursion. A
    popular approach to this is trampolining. The paper however
    introduces the idea of using continuations (or callbacks) to
    achieve this instead.
 
 ** Proposal
 
-   Converty Scheme to continuation passig style (nested function calls that never
+   Convert Scheme to continuation passig style (nested function calls that never
    return) and convert each callback into C functions. Arguments are
    passed as usual. Closure (free variables) are passed as additional
    arguments.
 
-   In this fashion, the stack keeps growning until it runs out of
+   In this fashion, the stack keeps growing until it runs out of
    memory. And when it does, the stack is reset - live objects and
    live closures are copied. They act as a starting point for the next
    continuation that begins once the stack is reset.
